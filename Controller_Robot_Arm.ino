@@ -1,3 +1,5 @@
+//นี่คือโค้ด ฝั่ง nodeMCU
+
 // Add Libraey
 #include <ESP8266WiFi.h>  // Connected WiFi
 #include <Servo.h>        // Use Servo
