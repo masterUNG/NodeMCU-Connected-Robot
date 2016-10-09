@@ -14,6 +14,10 @@ const char* host = "dweet.io";          // Set host
 Servo myservo;  // ประกาศ object ของการใช้ Servo
 int analogValue;
 
+// ##############################################################################
+// setup
+// ##############################################################################
+
 void setup() 
 {
   myservo.attach(SERVO_PIN);
@@ -35,6 +39,11 @@ void setup()
   Serial.println(WiFi.localIP());       // Print IP address
 } // setup
 
+// ##############################################################################
+// loop
+// ##############################################################################
+
+
 void loop() 
 {
   // Use WiFiClient class to create TCP connections
@@ -45,22 +54,29 @@ void loop()
     Serial.println("connection failed");  // Print connection fail messag
     return;
   }
+
+  // ##############################################################################
   //https://dweet.io/get/latest/dweet/for/SuperMaster
+  // ##############################################################################
+  
   client.print(String("GET /get/latest/dweet/for/SuperMaster HTTP/1.1\r\n") +
                "Host: " + host + "\r\n" +
                "Connection: keep-alive\r\n" +
                "Cache-Control: max-age=0\r\n\r\n");
-  delay(1000);
+  delay(3000);
+  
   while (client.available()) 
   {
-    String line = client.readStringUntil('\r');
-    Serial.println(line);
+    String strJSON = client.readStringUntil('\r');
+    Serial.println(strJSON);  // Display All JSON
 
-    String test = line.substring(139, 142);
-    Serial.println(test);
+    String strAnalog = strJSON.substring(139, 142);
+    Serial.println(strAnalog);  // Display only Value from Dweet
 
-    analogValue = test.toInt(); // Change String to int
-    //analogValue = map(analogValue, 0, 1023, 0, 140);
+    analogValue = strAnalog.toInt(); // Change String to int
+
+    //การกำหนด องศา ของ Servo (ตัวแปร, ค่าเริ่มต้น, 0, 179)
+    analogValue = map(analogValue, 0, 1023, 0, 179);
 
     Serial.println();
     Serial.println();
@@ -68,7 +84,7 @@ void loop()
     Serial.println(analogValue);
     
     myservo.write(analogValue);
-
-    
+  
   } // while
+  
 } // loop
