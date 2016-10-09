@@ -73,10 +73,15 @@ void loop()
     String strAnalog = strJSON.substring(139, 142);
     Serial.println(strAnalog);  // Display only Value from Dweet
 
+    String strServo =  strJSON.substring(136, 137);
+    Serial.println();
+    Serial.print("Servo ==> ");
+    Serial.println(strServo);
+
     analogValue = strAnalog.toInt(); // Change String to int
 
     //การกำหนด องศา ของ Servo (ตัวแปร, ค่าเริ่มต้น, 0, 179)
-    analogValue = map(analogValue, 0, 1023, 0, 179);
+    analogValue = map(analogValue, 0, 179, 0, 179);
 
     Serial.println();
     Serial.println();
