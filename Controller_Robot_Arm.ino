@@ -4,15 +4,19 @@
 #include <ESP8266WiFi.h>  // Connected WiFi
 #include <Servo.h>        // Use Servo
 
-#define SERVO_PIN D2  // นี่คือกำหนดขาให้ Servo
+#define SERVO_PIN D2  //define pin D2 on board
+#define SERVO_PIN2 D3 //define pin D3 on board
+#define SERVO_PIN3 D4 //define pin D4 on board
+#define SERVO_PIN4 D5 //define pin D5 on board
+
 
 const char* ssid     = "shareEWTC";     // Set SSID
 const char* password = "12345abcde"; // Set password
 const char* host = "dweet.io";          // Set host 
 
-
-Servo myservo;  // ประกาศ object ของการใช้ Servo
-int analogValue;
+// ประกาศ object ของการใช้ Servo
+Servo myservo, myservo2, myservo3, myservo4;  
+int analogValue, intServo;
 
 // ##############################################################################
 // setup
@@ -20,7 +24,12 @@ int analogValue;
 
 void setup() 
 {
+  //กำหนดขาควบคุม Servo
   myservo.attach(SERVO_PIN);
+  myservo2.attach(SERVO_PIN2);
+  myservo3.attach(SERVO_PIN3);
+  myservo4.attach(SERVO_PIN4);
+  
   Serial.begin(115200);                 // Print setting message
   delay(10);
   Serial.println();
@@ -56,7 +65,7 @@ void loop()
   }
 
   // ##############################################################################
-  //https://dweet.io/get/latest/dweet/for/SuperMaster
+  // https://dweet.io/get/latest/dweet/for/SuperMaster
   // ##############################################################################
   
   client.print(String("GET /get/latest/dweet/for/SuperMaster HTTP/1.1\r\n") +
@@ -74,6 +83,7 @@ void loop()
     Serial.println(strAnalog);  // Display only Value from Dweet
 
     String strServo =  strJSON.substring(136, 137);
+    intServo = strServo.toInt();
     Serial.println();
     Serial.print("Servo ==> ");
     Serial.println(strServo);
@@ -81,7 +91,7 @@ void loop()
     analogValue = strAnalog.toInt(); // Change String to int
 
     //การกำหนด องศา ของ Servo (ตัวแปร, ค่าเริ่มต้น, 0, 179)
-    analogValue = map(analogValue, 0, 179, 0, 179);
+    //analogValue = map(analogValue, 0, 179, 0, 179);
 
     Serial.println();
     Serial.println();
@@ -91,5 +101,33 @@ void loop()
     myservo.write(analogValue);
   
   } // while
+
+switch (intServo) {
+    case 0:
+    Serial.println(analogValue);
+    analogValue = map(analogValue, 0, 100, 129, 160); 
+      myservo.write(analogValue);
+      break;
+    case 1:
+    Serial.println(analogValue);
+    analogValue = map(analogValue, 0, 100, 30, 180); 
+      myservo2.write(analogValue);
+      break;
+      case 2:
+      Serial.println(analogValue); 
+      analogValue = map(analogValue, 0, 100, 53, 103);
+      myservo3.write(analogValue);
+      break;
+    case 3:
+     Serial.println(analogValue);
+    analogValue = map(analogValue, 0, 100, 54, 104); 
+      myservo4.write(analogValue);
+      break;
+    default: 
+      // if nothing else matches, do the default
+      // default is optional
+    break;
+  }
+  
   
 } // loop
